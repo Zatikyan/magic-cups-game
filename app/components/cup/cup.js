@@ -9,6 +9,7 @@ export default class Cup extends Sprite {
 
     this.rising = false;
     this.rotating = false;
+    this.speed = Math.PI / 20;
 
     // Ball options
     this.hasBall = false;
@@ -62,7 +63,8 @@ export default class Cup extends Sprite {
 
   // Rotation functionality
 
-  moveTo(cup, callback) {
+  moveTo(cup, level, callback) {
+    this.speed = this.speed * level;
     this.movementCallback = callback;
 
     this.rotating = true;

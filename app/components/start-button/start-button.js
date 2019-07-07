@@ -30,7 +30,7 @@ class StartButton extends Text {
   }
 
   remove() {
-    this.parent.removeChild(this);
+    this.parent && this.parent.removeChild(this);
   }
 }
 

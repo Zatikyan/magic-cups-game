@@ -80,6 +80,7 @@ class MagicCup extends PIXI.Container {
   }
 
   startGame() {
+    level.setLevel(0);
     this.thingies.forEach(thingie => {
       thingie.remove();
     })
@@ -108,8 +109,8 @@ class MagicCup extends PIXI.Container {
       return;
     }
     const [cup1, cup2] = this.getCupsToRotate();
-    cup2.moveTo(cup1, () => { });
-    cup1.moveTo(cup2, this.startRotation.bind(this));
+    cup2.moveTo(cup1, level.getLevel(), () => { });
+    cup1.moveTo(cup2, level.getLevel(), this.startRotation.bind(this));
     this.movementCount++;
   }
 
@@ -172,7 +173,7 @@ class MagicCup extends PIXI.Container {
   getCupsToRotate() {
     const cup1 = this.cups[Math.floor(Math.random() * this.cups.length)];
     const cup2 = this.cups[Math.floor(Math.random() * this.cups.length)];
-    if (cup1.options.id === cup2.options.id && !cup1.rotating && !cup2.rotating) {
+    if (cup1.options.id === cup2.options.id || cup1.rotating || cup2.rotating) {
       return this.getCupsToRotate();
     }
     return [cup1, cup2];

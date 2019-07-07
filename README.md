@@ -1,6 +1,6 @@
 # Magic Cups Game
 
-TODO: write short description
+Game "Magic Cups" written on PIXI.JS framework with 5 cups, leader board and with growing speed.
 
 ## Author
 
@@ -66,11 +66,25 @@ npm run start:build #or npm start:build
 
 ## Description
 
-TODO: write the game description
+"Magic Cups" game with five cups and growing speed.
 
-## How to play
+## Gameplay
 
-TODO: write the game rules
+### How to play
+
+After starting the game it will show you the ball under one of the cups and will rotate cups. After rotation ended you need to click on the cup under which you think the ball is. If your answer is right, the game will be continued with the grown speed. If your answer is wrong, it will show you a message about fail and text box to add your name to the leader board if your result is leading.
+
+### Leader board
+
+A leader board is containing the best ten results based on the level. To show text input for the leader board it checks is there at least ten results or is your result higher than at least one result in the leader board. Information about leaders saves on the local storage of your web browser and loads on game start.
+
+### Speed
+
+The default speed of rotation is π / 20 and it will grow based on the level. the algorithm of speed growing is:
+
+```math
+level * π / 20
+```
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
