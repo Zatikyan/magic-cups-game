@@ -15,7 +15,7 @@ import ball from './components/ball/ball';
 import background from './components/background/background';
 
 // Import utility functions
-import renderCups from './utility/cup-renderer';
+import { renderCups, setRotation } from './utility/cup-renderer';
 import renderThingies from './utility/thingie-renderer';
 import renderLines from './utility/line-renderer';
 
@@ -109,9 +109,16 @@ class MagicCup extends PIXI.Container {
       return;
     }
     const [cup1, cup2] = this.getCupsToRotate();
-    cup2.moveTo(cup1, level.getLevel(), () => { });
-    cup1.moveTo(cup2, level.getLevel(), this.startRotation.bind(this));
-    this.movementCount++;
+    setRotation(true);
+    Promise.all([
+      cup2.moveTo(cup1, level.getLevel()),
+      cup1.moveTo(cup2, level.getLevel())
+    ])
+      .then(() => {
+        this.movementCount++;
+        setRotation(false);
+        this.startRotation()
+      })
   }
 
   addCups() {

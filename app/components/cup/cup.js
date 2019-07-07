@@ -2,6 +2,8 @@ import { Sprite, Texture, Ticker } from 'pixi.js'
 import ball from '../ball/ball';
 import image from './cup.png';
 
+import { isRotation } from '../../utility/cup-renderer';
+
 export default class Cup extends Sprite {
   constructor(cupOptions) {
     const texture = Texture.from(image);
@@ -63,18 +65,20 @@ export default class Cup extends Sprite {
 
   // Rotation functionality
 
-  moveTo(cup, level, callback) {
+  moveTo(cup, level) {
     this.speed = this.speed * level;
-    this.movementCallback = callback;
 
     this.rotating = true;
     if (cup.position.x > this.position.x) {
       this.setPositionInCircle(cup, true);
       Ticker.shared.add(this.moveToRight, this);
-      return;
+    } else {
+      this.setPositionInCircle(cup, false);
+      Ticker.shared.add(this.moveToLeft, this);
     }
-    this.setPositionInCircle(cup, false);
-    Ticker.shared.add(this.moveToLeft, this);
+    return new Promise(resolve => {
+      this.rotationPromise = resolve;
+    });;
   }
 
   moveToLeft() {
@@ -83,7 +87,7 @@ export default class Cup extends Sprite {
       this.rotating = false;
       Ticker.shared.remove(this.moveToLeft, this);
       setTimeout(() => {
-        this.movementCallback();
+        this.rotationPromise();
       }, 500)
       return;
     }
@@ -100,8 +104,8 @@ export default class Cup extends Sprite {
       this.rotating = false;
       Ticker.shared.remove(this.moveToRight, this);
       setTimeout(() => {
-        this.movementCallback();
-      }, 500)
+        this.rotationPromise();
+      }, 500);
       return;
     }
 
@@ -176,9 +180,11 @@ export default class Cup extends Sprite {
   }
 
   onCupClick(callback) {
-    this.onCupClickCallback = callback;
-    if (!this.rising && !this.rotating) {
-      this.riseUp(() => { });
+    if (!isRotation()) {
+      this.onCupClickCallback = callback;
+      if (!this.rising && !this.rotating) {
+        this.riseUp(() => { });
+      }
     }
   }
 
