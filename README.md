@@ -27,8 +27,9 @@ sudo apt-get upgrade
 
 # Install required software
 sudo apt-get install git
-sudo apt-get install nodejs
 sudo apt-get install npm
+sudo npm i -g n
+sudo n stable
 sudo npm i -g http-server
 
 # Optional steps to install Google Chrome on Ubuntu 16.04 x64

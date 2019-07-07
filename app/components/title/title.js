@@ -9,7 +9,6 @@ class Title extends Text {
       font: 'bold italic Arial',
       fill: '#F7EDCA',
       stroke: '#4a1850',
-      fontSize: '70px',
       strokeThickness: 5,
       dropShadow: true,
       dropShadowColor: '#000000',
@@ -17,10 +16,17 @@ class Title extends Text {
       dropShadowDistance: 6,
     });
 
-    this.setPosition()
+    this.setPosition();
+  }
+
+  setPositionForFail() {
+    this.style.fontSize = '20px';
+    this.x = 400 - this.width / 2;
+    this.y = 0;
   }
 
   setPosition() {
+    this.style.fontSize = '70px';
     this.x = 400 - this.width / 2;
     this.y = 50;
   }

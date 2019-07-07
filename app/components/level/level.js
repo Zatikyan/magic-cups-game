@@ -12,6 +12,10 @@ class Level extends Text {
     });
   }
 
+  getLevel() {
+    return this.level;
+  }
+
   setLevel(l) {
     this.level = l;
   }

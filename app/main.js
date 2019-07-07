@@ -3,6 +3,12 @@ import './index.html';
 
 // Import components
 import startButton from './components/start-button/start-button';
+import leaderBoardButton from './components/leader-board-button/leader-board-button';
+import leaderBoardCloseButton from './components/leader-board-close-button/leader-board-close-button';
+import leaderBoard from './components/leader-board/leader-board';
+import leaderTextInput from './components/text-input/text-input';
+import addLeaderButton from './components/add-leader-button/add-leader-button';
+
 import level from './components/level/level';
 import title from './components/title/title';
 import ball from './components/ball/ball';
@@ -15,26 +21,36 @@ import renderLines from './utility/line-renderer';
 
 class MagicCup extends PIXI.Container {
 
-  run() {
-    this.thingies = renderThingies();
+  constructor() {
+    super();
 
     this.app = new PIXI.Application();
     this.app.renderer.backgroundColor = 0xffffff;
     document.body.appendChild(this.app.view);
 
+    this.thingies = renderThingies();
+    this.lines = renderLines();
+  }
+
+  run() {
     this.app.stage.addChild(background);
     this.app.stage.addChild(title);
 
-    this.lines = renderLines();
     this.lines.forEach(line => {
       this.app.stage.addChild(line);
     });
 
     startButton.initPosition();
     this.app.stage.addChild(startButton);
-    startButton.on('pointerdown', () => {
-      this.startGame();
-    });
+    startButton.on('pointerdown', this.startGame.bind(this));
+
+    leaderBoardButton.initPosition();
+    this.app.stage.addChild(leaderBoardButton);
+    leaderBoardButton.on('pointerdown', () => {
+      if (!leaderBoard.opened) {
+        this.openLeaderBoard();
+      }
+    })
 
     this.thingies.forEach(thingie => {
       this.app.stage.addChild(thingie);
@@ -43,9 +59,27 @@ class MagicCup extends PIXI.Container {
     this.movementCount = 0;
   }
 
-  startGame() {
+  openLeaderBoard() {
+    title.remove();
     startButton.remove();
+    leaderBoardButton.remove();
 
+    this.thingies.forEach(thingie => {
+      thingie.remove();
+    });
+
+    leaderBoard.open(this.app.stage)
+    this.app.stage.addChild(leaderBoardCloseButton);
+    leaderBoardCloseButton.on('pointerdown', this.closeLeaderBoard.bind(this));
+  }
+
+  closeLeaderBoard() {
+    leaderBoardCloseButton.remove();
+    leaderBoard.close(this.app.stage);
+    this.run();
+  }
+
+  startGame() {
     this.thingies.forEach(thingie => {
       thingie.remove();
     })
@@ -59,7 +93,11 @@ class MagicCup extends PIXI.Container {
   startNewLevel() {
     if (this.cups) this.removeCups();
     title.remove();
+    startButton.remove();
     level.setNewLevel();
+    addLeaderButton.remove();
+    leaderBoard.close(this.app.stage);
+    leaderTextInput.close(this.app.stage);
     this.addCups();
     this.setRandomBall(this.startRotation.bind(this));
   }
@@ -99,9 +137,28 @@ class MagicCup extends PIXI.Container {
 
   setFailed() {
     title.setFailedText();
-    level.setLevel(0);
+    title.setPositionForFail()
     this.app.stage.addChild(title);
     this.app.stage.addChild(startButton);
+    if (leaderBoard.isLeader(level.getLevel())) {
+      this.showAddLeaderFields();
+      return;
+    }
+    level.setLevel(0);
+  }
+
+  showAddLeaderFields() {
+    leaderTextInput.show(this.app.stage);
+    this.app.stage.addChild(addLeaderButton);
+    addLeaderButton.on('pointerdown', this.addNewLeader.bind(this))
+  }
+
+  addNewLeader() {
+    const lev = level.getLevel();
+    const name = leaderTextInput.getValue();
+    leaderBoard.setLeader(name, lev);
+    level.setLevel(0);
+    this.startNewLevel();
   }
 
   setRandomBall(callback) {

@@ -7,6 +7,7 @@
     "build": "webpack --mode production"
   },
   "dependencies": {
+    "pixi-text-input": "^1.0.4",
     "pixi.js": "^5.0.2",
     "popmotion": "^8.6.10"
   },
